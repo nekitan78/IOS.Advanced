@@ -39,6 +39,12 @@ struct WeatherData: Decodable {
         let condition:Cond
         let temp_c: Double
         let is_day: Int
+        let wind_kph: Double
+        let humidity: Int
+        let dewpoint_c: Double
+        let vis_km: Int
+        let uv: Int
+        let cloud: Int
     }
     
     struct Cond:Decodable{
@@ -73,7 +79,7 @@ final class ViewModel: ObservableObject {
         1168: ["thermometer.snowflake.fill", "thermometer.snowflake.fill"],
         1171: ["thermometer.snowflake.fill", "thermometer.snowflake.fill"],
         1180: ["cloud.sun.rain.fill", "cloud.moon.rain.fill"],
-        1183: ["cloud.rain.fill.fill", "cloud.rain.fill"],
+        1183: ["cloud.rain.fill", "cloud.rain.fill"],
         1186: ["cloud.rain.fill", "cloud.rain.fill"],
         1189: ["cloud.rain.fill", "cloud.rain.fill"],
         1192: ["cloud.heavyrain.fill", "cloud.heavyrain.fill"],
