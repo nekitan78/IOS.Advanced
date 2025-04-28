@@ -13,10 +13,13 @@ struct ProductPopUpView: View {
     let router:Router
     @State var isFavorite = false
     @EnvironmentObject var favoritesProducts: favoritesEnviroment
+    @State private var isLoading: Bool = false
+    @State var alert: AlertItem?
+
     
     var body: some View {
         VStack{
-            ImageLoader(imageURL: product.image_url, width: 300, height: 225)
+            ImageLoader(imageURL: product.image_url, width: 300, height: 225, isLoading: $isLoading, alertItem: $alert)
             Divider()
         
             VStack{
@@ -80,6 +83,11 @@ struct ProductPopUpView: View {
         }, alignment: .topLeading)
         .onAppear {
             isFavorite = favoritesProducts.favorites.contains(where: { $0.id == product.id })
+        }
+        
+        
+        if isLoading{
+            LoadingView()
         }
         
     }

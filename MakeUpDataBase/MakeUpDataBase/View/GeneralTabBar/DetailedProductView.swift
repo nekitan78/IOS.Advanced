@@ -9,11 +9,14 @@ import SwiftUI
 
 struct DetailedProductView: View {
     let product: Product
+    @State private var isLoading: Bool = false
+    @State var alert: AlertItem?
+
     var body: some View {
         ZStack{
             ScrollView{
                 VStack{
-                    ImageLoader(imageURL: product.image_url, width: 300, height: 300)
+                    ImageLoader(imageURL: product.image_url, width: 300, height: 300, isLoading: $isLoading, alertItem: $alert)
                     
                     HStack{
                         Text("Brand")
@@ -57,7 +60,12 @@ struct DetailedProductView: View {
                 }
             }
             
+            if isLoading{
+                LoadingView()
+            }
+            
         }
+        
     }
 }
 

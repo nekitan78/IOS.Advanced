@@ -7,10 +7,12 @@
 
 import UIKit
 import SwiftUI
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var cancellables = Set<AnyCancellable>()
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -26,6 +28,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if #available(iOS 15.0, *) {
                 UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
             }
+        
+        // authentication controller
+        let initScreenView = AuthentificationView(isShowSignIn: .constant(false))
+        let initScreenController = UIHostingController(rootView: initScreenView)
+        let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
+        
+        
+        
         
         let TabBarController = UITabBarController()
         
@@ -49,18 +59,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         navVc1.tabBarItem = UITabBarItem(title: "Brands", image:(UIImage(systemName: "square.grid.2x2")), tag: 1)
         
         // Favourities tabbar implementation
-        let favRootView = FavouritesView().environmentObject(favorites)
+        
+
+        
+        let FavoriteRouter = FavoriteRouter()
+        let favRootView = FavouritesView(router: FavoriteRouter).environmentObject(favorites)
         let favourites = UIHostingController(rootView: favRootView)
-        let navFavourities = UINavigationController(rootViewController: favourites)
-        navFavourities.tabBarItem = UITabBarItem(title: "Favourites", image:(UIImage(systemName: "star.square.on.square")), tag: 2)
+        let navFavourites = UINavigationController(rootViewController: favourites)
+        navFavourites.tabBarItem = UITabBarItem(title: "Favourites", image:(UIImage(systemName: "star.square.on.square")), tag: 2)
+        favorites.$favorites
+            .receive(on: DispatchQueue.main)
+            .sink { newFavorites in
+                navFavourites.tabBarItem.badgeValue = newFavorites.isEmpty ? nil : "\(newFavorites.count)"
+            }
+            .store(in: &cancellables)
+
         
-        // simulation of fourth tabbar
-        let vc3 = UIViewController()
-        vc3.view.backgroundColor = .yellow
-        let navVc3 = UINavigationController(rootViewController: vc3)
-        navVc3.tabBarItem = UITabBarItem(title: "Account", image:(UIImage(systemName: "person.circle")), tag: 3)
+        FavoriteRouter.rootViewController = navFavourites
         
-        TabBarController.viewControllers = [navCont, navVc1, navFavourities, navVc3]
+        // simulation of account tabbar
+        let AccountVC = UIHostingController(rootView: AccountView())
+        let NavAccountVC = UINavigationController(rootViewController: AccountVC)
+        NavAccountVC.tabBarItem = UITabBarItem(title: "Account", image:(UIImage(systemName: "person.circle")), tag: 3)
+        
+        TabBarController.viewControllers = [navCont, navVc1, navFavourites, NavAccountVC]
         
         window?.rootViewController = TabBarController
         window?.makeKeyAndVisible()

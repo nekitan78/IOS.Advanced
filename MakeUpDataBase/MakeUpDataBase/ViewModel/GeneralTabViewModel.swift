@@ -10,6 +10,8 @@ import Foundation
 final class ViewModel: ObservableObject{
     
     @Published var products: [Product] = []
+    @Published var alertMessage: AlertItem?
+    
     
     let router: Router
     
@@ -19,7 +21,7 @@ final class ViewModel: ObservableObject{
     
     func getDataProducts(){
         guard let url = Bundle.main.url(forResource: "lookfantastic_products", withExtension: "json")else {
-             print(ErrorType.invalidURL)
+            alertMessage = ErrorContext.invalidURL
             return
         }
         
@@ -28,7 +30,7 @@ final class ViewModel: ObservableObject{
             let productsData = try JSONDecoder().decode([Product].self, from: data)
             products = productsData
         }catch{
-            print(ErrorType.decodingFailed)
+            alertMessage = ErrorContext.decodingFailed
         }
         
         
