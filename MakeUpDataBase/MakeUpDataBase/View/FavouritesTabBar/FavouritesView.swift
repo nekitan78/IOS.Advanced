@@ -34,7 +34,10 @@ struct FavouritesView: View {
                             
                         }
                         .onDelete(perform: ){IndexSet in
-                            favoriteProducts.favorites.remove(atOffsets: IndexSet)
+                            for idx in IndexSet {
+                                let toRemove = favoriteProducts.favorites[idx]
+                                favoriteProducts.toggleFavorite(toRemove)
+                            }
                                 
                         }
                         

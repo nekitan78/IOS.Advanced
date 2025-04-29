@@ -69,13 +69,8 @@ struct ProductPopUpView: View {
             }
         }, alignment: .topTrailing)
         .overlay(Button(){
-            if isFavorite{
-                favoritesProducts.favorites.removeAll { $0.id == product.id }
-                isFavorite = false
-            }else{
-                favoritesProducts.favorites.append(product)
-                isFavorite = true
-            }
+            favoritesProducts.toggleFavorite(product)
+            isFavorite.toggle()
         }label: {
             Image(systemName: isFavorite ? "star.fill" : "star")
                 .foregroundStyle(.yellow)
@@ -94,7 +89,7 @@ struct ProductPopUpView: View {
 }
 
 #Preview {
-    ProductPopUpView(isShowProductDetail: .constant(true), product: Product(id: 0, brand: "Perricone MD", name: "Perricone MD Vitamin C Ester Brightening Serum 30ml", image_url: "https://www.lookfantastic.com/images?url=https://static.thcdn.com/productimg/original/13033787-8244875642933507.jpg&format=webp&auto=avif&width=985&height=985&fit=cover", price: "9.99", rating: "4", description: "dfdf", how_to_use: "fdfd", benefits: "fdf", full_ingredient_list: "fdf", sustainability: []), router: Router())
+    ProductPopUpView(isShowProductDetail: .constant(true), product: MockData.arrayOfProducts[0], router: Router())
 }
 
 struct descriptionRow: View {

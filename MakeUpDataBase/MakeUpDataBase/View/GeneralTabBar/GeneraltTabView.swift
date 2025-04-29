@@ -73,6 +73,7 @@ struct GeneraltTabView: View {
                     .disabled(isShowProductDetail)
                 }
             }.onAppear{
+                
                 productModel.getDataProducts()
             }
             .alert(item: $productModel.alertMessage){alert in
@@ -88,17 +89,6 @@ struct GeneraltTabView: View {
             if isLoading{
                 LoadingView()
             }
-        }
-        .onAppear(){
-            Task {
-                    try await GIDSignIn.sharedInstance.restorePreviousSignIn()
-                    
-                    let authUser = try? AuthenticationManager.shared.getAuthUser()
-                    self.isShowSignIn = authUser == nil ? true : false
-                }
-        }
-        .fullScreenCover(isPresented: $isShowSignIn){
-            AuthentificationView(isShowSignIn: $isShowSignIn)
         }
         
     }

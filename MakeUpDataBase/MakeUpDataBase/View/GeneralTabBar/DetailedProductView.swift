@@ -70,5 +70,5 @@ struct DetailedProductView: View {
 }
 
 #Preview {
-    DetailedProductView(product: Product(id: 0, brand: "Perricone MD", name: "Perricone MD Vitamin C Ester Brightening Serum 30ml", image_url: "https://www.lookfantastic.com/images?url=https://static.thcdn.com/productimg/original/13033787-8244875642933507.jpg&format=webp&auto=avif&width=985&height=985&fit=cover", price: "9.99", rating: "4", description: "dfdf", how_to_use: "fdfd", benefits: "fdf", full_ingredient_list: "fdf", sustainability: []) )
+    DetailedProductView(product: MockData.arrayOfProducts[0] )
 }

@@ -12,23 +12,30 @@ final class Utilities{
     static var shared = Utilities()
     private init () {}
     
-    
-    func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first(where: { $0.isKeyWindow })?.rootViewController) -> UIViewController? {
+    @MainActor
+    func topViewController(base: UIViewController? = nil) -> UIViewController? {
+        let rootVC = base ?? UIApplication.shared.keyWindow?.rootViewController
         
-        if let nav = base as? UINavigationController {
+        if let nav = rootVC as? UINavigationController {
             return topViewController(base: nav.visibleViewController)
         }
-        if let tab = base as? UITabBarController {
+        if let tab = rootVC as? UITabBarController {
             return topViewController(base: tab.selectedViewController)
         }
-        if let presented = base?.presentedViewController {
+        if let presented = rootVC?.presentedViewController {
             return topViewController(base: presented)
         }
-        return base
+        return rootVC
     }
 
 
+}
+extension UIApplication {
+    var keyWindow: UIWindow? {
+        return UIApplication.shared.connectedScenes
+            .filter { $0.activationState == .foregroundActive }
+            .first(where: { $0 is UIWindowScene })
+            .flatMap { $0 as? UIWindowScene }?.windows
+            .first(where: \.isKeyWindow)
+    }
 }

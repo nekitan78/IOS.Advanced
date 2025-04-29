@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import Combine
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -29,19 +30,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
             }
         
-        // authentication controller
-        let initScreenView = AuthentificationView(isShowSignIn: .constant(false))
-        let initScreenController = UIHostingController(rootView: initScreenView)
-        let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
         
         
-        
+        if Auth.auth().currentUser != nil {
+            switchToMain()
+        } else {
+            let initScreenView = AuthentificationView()
+            let initScreenController = UIHostingController(rootView: initScreenView)
+            let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
+            window?.rootViewController = initScreenNavigation
+            
+        }
+        window?.makeKeyAndVisible()
+    }
+    
+    func switchToMain(){
         
         let TabBarController = UITabBarController()
         
         let router = Router()
         let productModel = ViewModel(router: router)
         let favorites = favoritesEnviroment()
+        favorites.loadFavoritesFromFirestore()
         let rootView = GeneraltTabView(productModel: productModel).environmentObject(favorites)
         let controller = UIHostingController(rootView: rootView)
         let navCont = UINavigationController(rootViewController: controller)
@@ -84,10 +94,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         TabBarController.viewControllers = [navCont, navVc1, navFavourites, NavAccountVC]
         
-        window?.rootViewController = TabBarController
-        window?.makeKeyAndVisible()
-        
+        UIView.transition(with: window!,
+                              duration: 0.3,
+                              options: [.transitionFlipFromRight],
+                              animations: {
+                                  self.window?.rootViewController = TabBarController
+                              },
+                              completion: nil)
     }
+    
+    func backToAuth(){
+        let initScreenView = AuthentificationView()
+        let initScreenController = UIHostingController(rootView: initScreenView)
+        let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
+        
+        UIView.transition(with: window!,
+                              duration: 0.3,
+                              options: [.transitionCrossDissolve],
+                              animations: {
+                                  self.window?.rootViewController = initScreenNavigation
+                              },
+                              completion: nil)
+    }
+    
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

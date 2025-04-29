@@ -31,15 +31,26 @@ final class AuthenticationManager{
         return AuthDataResultModel(user: authDataResult.user)
     }
     
-    func getAuthUser()throws -> AuthDataResultModel{
+    func getAuthUser() throws-> AuthDataResultModel?{
         guard let user = Auth.auth().currentUser else {
-            throw NSError(domain: "User not found", code: 0, userInfo: nil)
+            return nil
         }
         return AuthDataResultModel(user: user)
     }
     
     func LogOut() throws{
-        try Auth.auth().signOut()
         GIDSignIn.sharedInstance.signOut()
+        try Auth.auth().signOut()
+        
+    }
+    @discardableResult
+    func createUser(email: String, password: String) async throws -> AuthDataResultModel{
+        let authDataResult = try await Auth.auth().createUser(withEmail: email, password: password)
+        return AuthDataResultModel(user: authDataResult.user)
+    }
+    
+    func logIn(email: String, password: String) async throws -> AuthDataResultModel{
+        let authDataResult = try await Auth.auth().signIn(withEmail: email, password: password)
+        return AuthDataResultModel(user: authDataResult.user)
     }
 }
