@@ -18,7 +18,7 @@ final class favoritesEnviroment: ObservableObject{
             guard let uid = Auth.auth().currentUser?.uid else { return }
             let data = favorites.map { try? $0.toDictionary() }.compactMap { $0 }
 
-            db.collection("users").document(uid).setData(["favorites": data]) { error in
+            db.collection("users").document(uid).setData(["favorites": data], merge: true) { error in
                 if let error = error {
                     print("Error saving favorites: \(error)")
                 } else {

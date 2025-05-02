@@ -82,12 +82,16 @@ struct AuthentificationView: View {
                         Task{
                             do{
                                 try await authViewModel.googleSignIn()
-                                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                       let sceneDelegate = scene.delegate as? SceneDelegate {
-                                        sceneDelegate.switchToMain()
+                                            
+                                // UI updates should be done on the main thread
+                                await MainActor.run {
+                                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                           let sceneDelegate = scene.delegate as? SceneDelegate {
+                                            sceneDelegate.switchToMain()
+                                    }
                                 }
                             }catch{
-                                
+                                print("Sign-in error: \(error)")
                             }
                         }
                     }

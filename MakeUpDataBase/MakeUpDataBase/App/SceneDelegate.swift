@@ -33,9 +33,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         
         if Auth.auth().currentUser != nil {
+            ThemeManager.shared.loadThemeFromFirestore()
             switchToMain()
         } else {
-            let initScreenView = AuthentificationView()
+            let themeManager = ThemeManager.shared
+            let initScreenView = AuthentificationView().environmentObject(themeManager)
             let initScreenController = UIHostingController(rootView: initScreenView)
             let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
             window?.rootViewController = initScreenNavigation
@@ -88,7 +90,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         FavoriteRouter.rootViewController = navFavourites
         
         // simulation of account tabbar
-        let AccountVC = UIHostingController(rootView: AccountView())
+        let themeManager = ThemeManager.shared
+        let AccountVC = UIHostingController(rootView: AccountView().environmentObject(themeManager))
         let NavAccountVC = UINavigationController(rootViewController: AccountVC)
         NavAccountVC.tabBarItem = UITabBarItem(title: "Account", image:(UIImage(systemName: "person.circle")), tag: 3)
         
@@ -104,7 +107,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func backToAuth(){
-        let initScreenView = AuthentificationView()
+        let themeManager = ThemeManager.shared
+        let initScreenView = AuthentificationView().environmentObject(themeManager)
         let initScreenController = UIHostingController(rootView: initScreenView)
         let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
         

@@ -13,12 +13,16 @@ import GoogleSignIn
 struct AuthDataResultModel{
     let uid: String
     let email: String?
-    let photoURL: String?
+    var photoURL: String?
+    let providerID: String
+    let displayName: String?
     
     init(user: User){
         self.uid = user.uid
         self.email = user.email
         self.photoURL = user.photoURL?.absoluteString
+        self.providerID = user.providerData.first?.providerID ?? "unknown"
+        self.displayName = user.displayName
     }
 }
 
@@ -39,8 +43,12 @@ final class AuthenticationManager{
     }
     
     func LogOut() throws{
-        GIDSignIn.sharedInstance.signOut()
-        try Auth.auth().signOut()
+        do {
+            GIDSignIn.sharedInstance.signOut()
+            try Auth.auth().signOut()
+        } catch {
+            print("Error in log out")
+        }
         
     }
     @discardableResult

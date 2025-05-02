@@ -10,6 +10,7 @@ import GoogleSignIn
 import GoogleSignInSwift
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 @MainActor
 final class AuthentificationViewModel:ObservableObject{
@@ -34,7 +35,16 @@ final class AuthentificationViewModel:ObservableObject{
         let accessToken = signInResult.user.accessToken.tokenString
         
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-        try await AuthenticationManager.shared.signInWithGoogle(credential: credential)
+        let authResult = try await AuthenticationManager.shared.signInWithGoogle(credential: credential)
+        
+        let db = Firestore.firestore()
+        let userPhoto:[String: Any] = [
+            "photoURL": signInResult.user.profile?.imageURL(withDimension: 200)?.absoluteString ?? ""
+        ]
+        
+        try await db.collection("users").document(authResult.uid).setData(userPhoto, merge: true)
+        
+        ThemeManager.shared.loadThemeFromFirestore()
 
     }
     
@@ -66,6 +76,7 @@ final class AuthentificationViewModel:ObservableObject{
         }
         do{
             let _ = try await AuthenticationManager.shared.logIn(email: email, password: password)
+            ThemeManager.shared.loadThemeFromFirestore()
             return true
         }catch{
             alertMessage = ErrorContext.logInError
