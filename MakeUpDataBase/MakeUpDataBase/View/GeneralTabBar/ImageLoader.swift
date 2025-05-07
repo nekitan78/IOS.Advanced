@@ -105,7 +105,9 @@ struct ImageLoader: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: width, height: height)
             } else {
-                ProgressView()
+                Image(.empty)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: width, height: height)
             }
         }

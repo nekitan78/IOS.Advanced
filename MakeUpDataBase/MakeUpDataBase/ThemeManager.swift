@@ -59,9 +59,8 @@ final class ThemeManager: ObservableObject {
         }
         
         // Update status bar appearance for smoother transition
-        UIApplication.shared.windows.forEach { window in
-            window.rootViewController?.setNeedsStatusBarAppearanceUpdate()
-        }
+        window.rootViewController?.setNeedsStatusBarAppearanceUpdate()
+    
     }
     
     // Save theme preference to Firestore
@@ -96,7 +95,7 @@ final class ThemeManager: ObservableObject {
 
             guard let document = document, document.exists,
                   let data = document.data(),
-                  let isDark = data["isDarkModeEnabled"] as? Bool else {
+                  let isDark = data["isDarkMode"] as? Bool else {
                 print("No theme data found. Using default (light).")
                 DispatchQueue.main.async {
                     self?.isDarkMode = false

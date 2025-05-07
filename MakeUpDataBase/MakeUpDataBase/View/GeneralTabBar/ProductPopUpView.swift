@@ -7,10 +7,15 @@
 
 import SwiftUI
 
+protocol ProductRouting {
+    func goToDetail(with product: Product)
+}
+
+
 struct ProductPopUpView: View {
     @Binding var isShowProductDetail: Bool
     let product: Product
-    let router:Router
+    let router:ProductRouting
     @State var isFavorite = false
     @EnvironmentObject var favoritesProducts: favoritesEnviroment
     @State private var isLoading: Bool = false
@@ -36,7 +41,7 @@ struct ProductPopUpView: View {
             }.padding()
             Spacer()
             Button(){
-                router.gotoDetail(with: product)
+                router.goToDetail(with: product)
             }label: {
                 Text("Learn more")
                     .font(.title3)
@@ -86,10 +91,6 @@ struct ProductPopUpView: View {
         }
         
     }
-}
-
-#Preview {
-    ProductPopUpView(isShowProductDetail: .constant(true), product: MockData.arrayOfProducts[0], router: Router())
 }
 
 struct descriptionRow: View {

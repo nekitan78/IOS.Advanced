@@ -27,7 +27,7 @@ struct ErrorContext{
     )
     
     static let invalidImageURL = AlertItem(title: Text("Invalid Image URL"),
-                                   message: Text("Something is happened with imgae url, check if it is correct"),
+                                   message: Text("Something is happened with image url, check if it is correct"),
                                    dismissButton: .default(Text("Ok"))
     )
     
@@ -67,5 +67,46 @@ struct ErrorContext{
                                    dismissButton: .default(Text("Ok"))
     )
     
+    static let IdError = AlertItem(title: Text("Error"),
+                                   message: Text("Failed to get user ID. Please log out and log back in."),
+                                   dismissButton: .default(Text("Ok"))
+                                    
+    )
     
+    static let ImageError = AlertItem(title: Text("Image Error"),
+                                   message: Text("Failed to process the selected image."),
+                                   dismissButton: .default(Text("Ok"))
+                                    
+    )
+    
+    static let uploadError = AlertItem(title: Text("Upload Error"),
+                                       message: Text("Somethin happend during uploading"),
+                                       dismissButton: .default(Text("Ok"))
+                                    
+    )
+    
+    static let downloadUrlError = AlertItem(title: Text("URL Error"),
+                                            message: Text("Failed to get download URL"),
+                                            dismissButton: .default(Text("Ok"))
+                                    
+    )
+    
+    static let dataBaseError = AlertItem(title: Text("Database Error"),
+                                         message: Text("Database error occured, something happend with the database"),
+                                         dismissButton: .default(Text("Ok"))
+                                    
+    )
+    
+    static let profileUpdateError = AlertItem(title: Text("Profile Update Error"),
+                                              message: Text("Couldnt update profile"),
+                                              dismissButton: .default(Text("Ok"))
+                                    
+    )
+    
+    static let productError = AlertItem(title: Text("Product error"),
+                                              message: Text("Couldnt find a product"),
+                                              dismissButton: .default(Text("Ok"))
+                                    
+    )
 }
+

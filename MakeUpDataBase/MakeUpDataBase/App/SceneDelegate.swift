@@ -36,8 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             ThemeManager.shared.loadThemeFromFirestore()
             switchToMain()
         } else {
-            let themeManager = ThemeManager.shared
-            let initScreenView = AuthentificationView().environmentObject(themeManager)
+            let initScreenView = AuthentificationView()
             let initScreenController = UIHostingController(rootView: initScreenView)
             let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
             window?.rootViewController = initScreenNavigation
@@ -64,11 +63,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         
         
-        // simulation of second tabbar
-        let vc1 = UIViewController()
-        vc1.view.backgroundColor = .systemBlue
-        let navVc1 = UINavigationController(rootViewController: vc1)
-        navVc1.tabBarItem = UITabBarItem(title: "Brands", image:(UIImage(systemName: "square.grid.2x2")), tag: 1)
+        // simulation of barcode tab bar
+        let BarcodeRouter = BarcodeRouter()
+        let barcodeView = BarcodeView(viewModel: BarcodeViewModel(router: BarcodeRouter))
+        let barcodeCont = UIHostingController(rootView: barcodeView.environmentObject(favorites))
+        let BarCodeNav = UINavigationController(rootViewController: barcodeCont)
+        BarCodeNav.tabBarItem = UITabBarItem(title: "Barcode", image:(UIImage(systemName: "barcode.viewfinder")), tag: 1)
+        
+        BarcodeRouter.rootViewController = BarCodeNav
         
         // Favourities tabbar implementation
         
@@ -90,12 +92,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         FavoriteRouter.rootViewController = navFavourites
         
         // simulation of account tabbar
-        let themeManager = ThemeManager.shared
-        let AccountVC = UIHostingController(rootView: AccountView().environmentObject(themeManager))
+        
+        let AccountVC = UIHostingController(rootView: AccountView())
         let NavAccountVC = UINavigationController(rootViewController: AccountVC)
         NavAccountVC.tabBarItem = UITabBarItem(title: "Account", image:(UIImage(systemName: "person.circle")), tag: 3)
         
-        TabBarController.viewControllers = [navCont, navVc1, navFavourites, NavAccountVC]
+        TabBarController.viewControllers = [navCont, BarCodeNav, navFavourites, NavAccountVC]
         
         UIView.transition(with: window!,
                               duration: 0.3,
@@ -107,8 +109,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func backToAuth(){
-        let themeManager = ThemeManager.shared
-        let initScreenView = AuthentificationView().environmentObject(themeManager)
+       
+        let initScreenView = AuthentificationView()
         let initScreenController = UIHostingController(rootView: initScreenView)
         let initScreenNavigation = UINavigationController(rootViewController: initScreenController)
         

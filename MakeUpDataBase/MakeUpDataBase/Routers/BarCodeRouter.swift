@@ -1,23 +1,18 @@
 //
-//  Router.swift
+//  BarCodeRouter.swift
 //  MakeUpDataBase
 //
-//  Created by Andryuchshenko Nikita on 22.04.2025.
+//  Created by Andryuchshenko Nikita on 06.05.2025.
 //
 
 import Foundation
 import SwiftUI
-import UIKit
 
-final class Router: ProductRouting{
-    
+final class BarcodeRouter: ProductRouting{
     var rootViewController: UINavigationController?
     
-    func goToDetail(with product: Product) {
+    func goToDetail(with product: Product){
         let detailVC = UIHostingController(rootView: DetailedProductView(product: product))
         rootViewController?.show(detailVC, sender: nil)
     }
-    
-    
-    
 }

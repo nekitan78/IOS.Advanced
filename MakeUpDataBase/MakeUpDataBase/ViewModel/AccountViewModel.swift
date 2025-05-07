@@ -59,27 +59,17 @@ final class AccountViewModel: ObservableObject {
     
     func uploadAndSetPhoto(image: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else {
-            print("❌ Failed to get userid")
-            alertMessage = AlertItem(
-                title: Text("Error"),
-                message: Text("Failed to get user ID. Please log out and log back in."),
-                dismissButton: .default(Text("Ok"))
-            )
+            alertMessage = ErrorContext.IdError
             return
         }
         
         // Convert image to JPEG data
         guard let imageData = image.jpegData(compressionQuality: 0.5) else {
-            print("❌ Failed to convert image to JPEG.")
-            alertMessage = AlertItem(
-                title: Text("Image Error"),
-                message: Text("Failed to process the selected image."),
-                dismissButton: .default(Text("Ok"))
-            )
+            alertMessage = ErrorContext.ImageError
             return
         }
         
-        print("✅ Starting upload, image size: \(imageData.count / 1024) KB")
+        print("Starting upload, image size: \(imageData.count / 1024) KB")
         
         let storage = Storage.storage()
         let storageRef = storage.reference().child("profile_images/\(uid)_\(Date().timeIntervalSince1970).jpg")
@@ -93,15 +83,10 @@ final class AccountViewModel: ObservableObject {
         storageRef.putData(imageData, metadata: metadata) { [weak self] metadata, error in
             guard let self = self else { return }
             
-            if let error = error {
+            if error != nil {
                 DispatchQueue.main.async {
                     self.isLoading = false
-                    print("❌ Upload error: \(error.localizedDescription)")
-                    self.alertMessage = AlertItem(
-                        title: Text("Upload Error"),
-                        message: Text(error.localizedDescription),
-                        dismissButton: .default(Text("Ok"))
-                    )
+                    self.alertMessage = ErrorContext.uploadError
                 }
                 return
             }
@@ -109,15 +94,10 @@ final class AccountViewModel: ObservableObject {
             storageRef.downloadURL { [weak self] url, error in
                 guard let self = self else { return }
                 
-                if let error = error {
+                if error != nil {
                     DispatchQueue.main.async {
                         self.isLoading = false
-                        print("❌ Failed to get download URL: \(error.localizedDescription)")
-                        self.alertMessage = AlertItem(
-                            title: Text("URL Error"),
-                            message: Text(error.localizedDescription),
-                            dismissButton: .default(Text("Ok"))
-                        )
+                        self.alertMessage = ErrorContext.invalidImageURL
                     }
                     return
                 }
@@ -125,11 +105,7 @@ final class AccountViewModel: ObservableObject {
                 guard let downloadURL = url else {
                     DispatchQueue.main.async {
                         self.isLoading = false
-                        self.alertMessage = AlertItem(
-                            title: Text("URL Error"),
-                            message: Text("Failed to get download URL"),
-                            dismissButton: .default(Text("Ok"))
-                        )
+                        self.alertMessage = ErrorContext.downloadUrlError
                     }
                     return
                 }
@@ -144,15 +120,11 @@ final class AccountViewModel: ObservableObject {
                 ) { [weak self] error in
                     guard let self = self else { return }
                     
-                    if let error = error {
+                    if error != nil {
                         DispatchQueue.main.async {
                             self.isLoading = false
-                            print("❌ Firestore update error: \(error.localizedDescription)")
-                            self.alertMessage = AlertItem(
-                                title: Text("Database Error"),
-                                message: Text(error.localizedDescription),
-                                dismissButton: .default(Text("Ok"))
-                            )
+                            self.alertMessage = ErrorContext.dataBaseError
+                            
                         }
                         return
                     }
@@ -166,13 +138,8 @@ final class AccountViewModel: ObservableObject {
                         DispatchQueue.main.async {
                             self.isLoading = false
                             
-                            if let error = error {
-                                print("❌ Auth profile update error: \(error.localizedDescription)")
-                                self.alertMessage = AlertItem(
-                                    title: Text("Profile Update Error"),
-                                    message: Text(error.localizedDescription),
-                                    dismissButton: .default(Text("Ok"))
-                                )
+                            if error != nil {
+                                self.alertMessage = ErrorContext.profileUpdateError
                             } else {
                                 print("✅ Profile updated successfully")
                                 Task {

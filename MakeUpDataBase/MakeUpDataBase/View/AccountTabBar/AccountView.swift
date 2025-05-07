@@ -10,9 +10,9 @@ import PhotosUI
 
 struct AccountView: View {
     @StateObject var accountViewModel = AccountViewModel()
-    @EnvironmentObject var themeManager: ThemeManager
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImage: UIImage? = nil
+    @State private var isDarkMode: Bool = ThemeManager.shared.isDarkMode
 
 
     var body: some View {
@@ -47,7 +47,7 @@ struct AccountView: View {
                         PhotosPicker(selection: $selectedItem, matching: .images) {
                             Text("Choose Profile Photo")
                         }
-                        .onChange(of: selectedItem) { newItem in
+                        .onChange(of: selectedItem) {_, newItem in
                             Task {
                                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                                    let image = UIImage(data: data) {
@@ -83,13 +83,19 @@ struct AccountView: View {
                             HStack {
                                 Text("Dark Mode")
                                 Spacer()
-                                Toggle("", isOn: $themeManager.isDarkMode.animation(.easeInOut(duration: themeManager.transitionDuration)))
+                                Toggle("", isOn: $isDarkMode)
                                     .labelsHidden()
+                                    .onChange(of: isDarkMode) { _, newValue in
+                                        withAnimation(.easeInOut(duration: ThemeManager.shared.transitionDuration)) {
+                                            ThemeManager.shared.isDarkMode = newValue
+                                        }
+                                    }
                             }
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                withAnimation(.easeInOut(duration: themeManager.transitionDuration)) {
-                                    themeManager.toggleTheme()
+                                withAnimation(.easeInOut(duration: ThemeManager.shared.transitionDuration)) {
+                                    ThemeManager.shared.toggleTheme()
+                                    isDarkMode.toggle()
                                 }
                             }
                         }
@@ -120,6 +126,7 @@ struct AccountView: View {
             Task {
                 await accountViewModel.fetchUser()
             }
+            isDarkMode = ThemeManager.shared.isDarkMode
         }
         .alert(item: $accountViewModel.alertMessage) { alert in
             Alert(title: alert.title, message: alert.message, dismissButton: alert.dismissButton)

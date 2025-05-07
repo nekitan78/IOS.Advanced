@@ -16,7 +16,7 @@ final class favoritesEnviroment: ObservableObject{
         
         func saveFavoritesToFirestore() {
             guard let uid = Auth.auth().currentUser?.uid else { return }
-            let data = favorites.map { try? $0.toDictionary() }.compactMap { $0 }
+            let data = favorites.map {$0.toDictionary() }.compactMap { $0 }
 
             db.collection("users").document(uid).setData(["favorites": data], merge: true) { error in
                 if let error = error {
@@ -37,7 +37,7 @@ final class favoritesEnviroment: ObservableObject{
 
                 if let data = snapshot?.data(),
                    let rawFavorites = data["favorites"] as? [[String: Any]] {
-                    self.favorites = rawFavorites.compactMap { try? Product(from: $0) }
+                    self.favorites = rawFavorites.compactMap {Product(from: $0) }
                 }
             }
         }
